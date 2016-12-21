@@ -1,10 +1,12 @@
+const Map = require('./map');
+
 /**
  * Represents a state in a DFA.
  */
 class State {
   constructor() {
     this.accepting = false;
-    this.transitions = Object.create(null);
+    this.transitions = new Map(k => new State);
   }
 
   /**
@@ -16,8 +18,8 @@ class State {
     visited.add(this);
 
     yield this;
-    for (let symbol in this.transitions) {
-      yield* this.transitions[symbol].visit(visited);
+    for (let state of this.transitions.values()) {
+      yield* state.visit(visited);
     }
   }
 }

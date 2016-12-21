@@ -23,8 +23,8 @@ function toRegex(root) {
     }
 
     A[i] = [];
-    for (let t in a.transitions) {
-      let j = states.indexOf(a.transitions[t]);
+    for (let [t, s] of a.transitions) {
+      let j = states.indexOf(s);
       A[i][j] = A[i][j] ? union(A[i][j], new Literal(t)) : new Literal(t);
     }
   }
@@ -51,28 +51,16 @@ function toRegex(root) {
   return new RegExp(B[0]);
 }
 
+/**
+ * Creates a repetition if `exp` exists.
+ */
 function star(exp) {
   return exp ? new Repetition(exp, '*') : null;
 }
 
-function removeCommonSubstring(a, b, side) {
-  a = a.getLiteral && a.getLiteral(side);
-  b = b.getLiteral && b.getLiteral(side);
-  if (!a || !b) return null;
-
-  let s = commonSubstring(a.value, b.value, side);
-
-  if (side === 'start') {
-    a.value = a.value.slice(s.length);
-    b.value = b.value.slice(s.length);
-  } else {
-    a.value = a.value.slice(0, a.value.length - s.length);
-    b.value = b.value.slice(0, b.value.length - s.length);
-  }
-
-  return s;
-}
-
+/**
+ * Creates a union between two expressions
+ */
 function union(a, b) {
   if (a != null && b != null && a !== b) {
     // Hoist common substrings at the start and end of the options
@@ -82,8 +70,6 @@ function union(a, b) {
 
     a = a.simplify ? a.simplify() : a;
     b = b.simplify ? b.simplify() : b;
-
-    // console.log(a.value === '', b.value === '')
 
     // If a or b is empty, make an optional group instead
     if (a.isEmpty || b.isEmpty) {
@@ -113,6 +99,30 @@ function union(a, b) {
   return a || b;
 }
 
+/**
+ * Removes the common prefix or suffix from the two expressions
+ */
+function removeCommonSubstring(a, b, side) {
+  a = a.getLiteral && a.getLiteral(side);
+  b = b.getLiteral && b.getLiteral(side);
+  if (!a || !b) return null;
+
+  let s = commonSubstring(a.value, b.value, side);
+
+  if (side === 'start') {
+    a.value = a.value.slice(s.length);
+    b.value = b.value.slice(s.length);
+  } else {
+    a.value = a.value.slice(0, a.value.length - s.length);
+    b.value = b.value.slice(0, b.value.length - s.length);
+  }
+
+  return s;
+}
+
+/**
+ * Finds the common prefix or suffix between to strings
+ */
 function commonSubstring(a, b, side) {
   let dir = side === 'start' ? 1 : -1;
   a = Array.from(a);
@@ -134,6 +144,9 @@ function commonSubstring(a, b, side) {
   return res;
 }
 
+/**
+ * Creates a concatenation between expressions a and b
+ */
 function concat(a, b) {
   if (a == null || b == null) {
     return null;

@@ -1,8 +1,9 @@
+const Map = require('./map');
 const Set = require('./set');
 const State = require('./state');
 
 /**
- * Implements Hopcroft's algorithm to minimize a DFA.
+ * Implements Hopcroft's DFA minimization algorithm.
  * https://en.wikipedia.org/wiki/DFA_minimization#Hopcroft.27s_algorithm
  *
  * @param {State} root - the initial state of the DFA
@@ -10,21 +11,14 @@ const State = require('./state');
  * @return {State} - the new initial state
  */
 function minimize(root, alphabet) {
-  let states = new Set;
-  let finalStates = new Set;
+  let states = new Set(root.visit());
+  let finalStates = states.filter(s => s.accepting);
 
-  for (let state of root.visit()) {
-    states.add(state);
-    if (state.accepting) {
-      finalStates.add(state);
-    }
-  }
-
-  // Create a map of incoming transitions to each state.
-  let transitions = new DefaultMap(k => new DefaultMap(k => new Set));
+  // Create a map of incoming transitions to each state, grouped by character.
+  let transitions = new Map(k => new Map(k => new Set));
   for (let s of states) {
-    for (let t in s.transitions) {
-      transitions.get(s.transitions[t]).get(t).add(s);
+    for (let [t, st] of s.transitions) {
+      transitions.get(st).get(t).add(s);
     }
   }
 
@@ -35,7 +29,7 @@ function minimize(root, alphabet) {
     let A = W.shift();
 
     // Collect states that have transitions leading to states in A, grouped by character.
-    let t = new DefaultMap(k => new Set);
+    let t = new Map(k => new Set);
     for (let s of A) {
       for (let [T, X] of transitions.get(s)) {
         t.get(T).addAll(X);
@@ -45,38 +39,39 @@ function minimize(root, alphabet) {
     for (let X of t.values()) {
       for (let Y of P) {
         let i = X.intersection(Y);
+        if (i.size === 0) {
+          continue;
+        }
+
         let d = Y.difference(X);
+        if (d.size === 0) {
+          continue;
+        }
 
-        if (i.size > 0 && d.size > 0) {
-          P.replace(Y, i, d);
+        P.replace(Y, i, d);
 
-          let y = W.find(v => v.equals(Y));
-          if (y) {
-            W.replace(y, i, d);
-          } else {
-            if (i.size <= d.size) {
-              W.add(i);
-            } else {
-              W.add(d);
-            }
-          }
+        let y = W.find(v => v.equals(Y));
+        if (y) {
+          W.replace(y, i, d);
+        } else if (i.size <= d.size) {
+          W.add(i);
+        } else {
+          W.add(d);
         }
       }
     }
   }
 
-  let newStates = new Map;
-  for (let S of P) {
-    newStates.set(S, new State);
-  }
-
+  // Each set S in P now represents a state in the minimized DFA.
+  // Build the new states and transitions.
+  let newStates = new Map(k => new State);
   let initial = null;
+
   for (let S of P) {
     let first = S.first();
     let s = newStates.get(S);
-    for (let c in first.transitions) {
-      let old = first.transitions[c];
-      s.transitions[c] = newStates.get(P.find(v => v.has(old)));
+    for (let [c, old] of first.transitions) {
+      s.transitions.set(c, newStates.get(P.find(v => v.has(old))));
     }
 
     s.accepting = first.accepting;
@@ -87,23 +82,6 @@ function minimize(root, alphabet) {
   }
 
   return initial;
-}
-
-class DefaultMap extends Map {
-  constructor(defaultGetter) {
-    super();
-    this.defaultGetter = defaultGetter;
-  }
-
-  get(key) {
-    if (!super.has(key)) {
-      let res = this.defaultGetter(key);
-      this.set(key, res);
-      return res;
-    }
-
-    return super.get(key);
-  }
 }
 
 module.exports = minimize;

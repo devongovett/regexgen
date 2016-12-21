@@ -105,7 +105,6 @@ class Literal {
   }
 
   toString() {
-    // return jsesc(this.value, {es6: true});
     return jsesc(this.value).replace(/([\t\n\f\r\$\(\)\*\+\-\.\?\[\]\^\{\|\}])/g, '\\$1');
   }
 

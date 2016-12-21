@@ -21,12 +21,7 @@ class Trie {
     let node = this.root;
     for (let char of string) {
       this.alphabet.add(char);
-
-      if (!node.transitions[char]) {
-        node.transitions[char] = new State;
-      }
-
-      node = node.transitions[char];
+      node = node.transitions.get(char);
     }
 
     node.accepting = true;
