@@ -21,7 +21,7 @@ let t = new Trie;
 t.add('foobar');
 t.add('foobaz');
 
-t.toRegExp(); // => /foo(?:ba[rz])/
+t.toRegExp(); // => /fooba[rz]/
 ```
 
 ## How does it work?
@@ -39,6 +39,9 @@ t.toRegExp(); // => /foo(?:ba[rz])/
    which is quite elegant. It expresses the DFA as a system of equations which can be solved
    for a resulting regex. Along the way, some additional optimizations are made, such
    as hoisting common substrings out of an alternation, and using character class ranges.
+   This produces an an [Abstract Syntax Tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree)
+   (AST) for the regex, which is then converted to a string and compiled to a JavaScript
+   `RegExp` object.
 
 ## License
 
