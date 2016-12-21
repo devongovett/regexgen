@@ -7,7 +7,7 @@ const {Alternation, CharClass, Concatenation, Repetition, Literal} = require('./
  * @param {State} root - the initial state of the DFA
  * @return {RegExp} - the converted regular expression
  */
-function toRegex(root) {
+function toRegExp(root) {
   let states = Array.from(root.visit());
 
   // Setup the system of equations A and B from Arden's Lemma.
@@ -176,4 +176,4 @@ function concat(a, b) {
   return new Concatenation(a, b);
 }
 
-module.exports = toRegex;
+module.exports = toRegExp;
