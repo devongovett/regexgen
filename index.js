@@ -1,3 +1,5 @@
+'use strict';
+
 const Trie = require('./src/trie');
 
 /**
