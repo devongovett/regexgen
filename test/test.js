@@ -41,4 +41,12 @@ describe('regexgen', function () {
   it('should support regex flags', function () {
     assert.deepEqual(regexgen(['a', 'b', 'c'], 'g'), /[a-c]/g);
   });
+
+  it('should support using the Trie class directly', function () {
+    let t = new regexgen.Trie;
+    t.add('foobar');
+    t.add('foobaz');
+
+    assert.deepEqual(t.toRegExp(), /fooba[rz]/);
+  });
 });
