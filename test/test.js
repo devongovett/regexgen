@@ -36,5 +36,9 @@ describe('regexgen', function () {
 
   it('should escape non-ascii characters', function () {
     assert.deepEqual(regexgen(['🎉']), /\uD83C\uDF89/);
-  })
+  });
+
+  it('should support regex flags', function () {
+    assert.deepEqual(regexgen(['a', 'b', 'c'], 'g'), /[a-c]/g);
+  });
 });

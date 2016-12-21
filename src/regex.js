@@ -7,7 +7,7 @@ const {Alternation, CharClass, Concatenation, Repetition, Literal} = require('./
  * @param {State} root - the initial state of the DFA
  * @return {RegExp} - the converted regular expression
  */
-function toRegExp(root) {
+function toRegExp(root, flags) {
   let states = Array.from(root.visit());
 
   // Setup the system of equations A and B from Arden's Lemma.
@@ -48,7 +48,7 @@ function toRegExp(root) {
     }
   }
 
-  return new RegExp(B[0]);
+  return new RegExp(B[0], flags);
 }
 
 /**
