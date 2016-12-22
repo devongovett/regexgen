@@ -34,5 +34,6 @@
   "bugs": {
     "url": "https://github.com/devongovett/regexgen/issues"
   },
-  "homepage": "https://github.com/devongovett/regexgen#readme"
+  "homepage": "https://github.com/devongovett/regexgen#readme",
+  "runkitExample": "const regexgen = require('regexgen');\n\nregexgen(['foobar', 'foobaz', 'foozap', 'fooza']);"
 }
