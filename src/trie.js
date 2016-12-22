@@ -32,7 +32,7 @@ class Trie {
    * @return {State} - the starting state of the minimal DFA
    */
   minimize() {
-    return minimize(this.root, this.alphabet);
+    return minimize(this.root);
   }
 
   /**

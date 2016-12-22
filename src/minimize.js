@@ -7,10 +7,9 @@ const State = require('./state');
  * https://en.wikipedia.org/wiki/DFA_minimization#Hopcroft.27s_algorithm
  *
  * @param {State} root - the initial state of the DFA
- * @param {Set} alphabet - the DFA's alphabet
  * @return {State} - the new initial state
  */
-function minimize(root, alphabet) {
+function minimize(root) {
   let states = new Set(root.visit());
   let finalStates = states.filter(s => s.accepting);
 
