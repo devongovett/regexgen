@@ -8,7 +8,7 @@ const {Alternation, CharClass, Concatenation, Repetition, Literal} = require('./
  * @param {State} root - the initial state of the DFA
  * @return {String} - the converted regular expression pattern
  */
-function toString(root) {
+function toRegex(root) {
   let states = Array.from(root.visit());
 
   // Setup the system of equations A and B from Arden's Lemma.
@@ -50,18 +50,6 @@ function toString(root) {
   }
 
   return B[0].toString();
-}
-
-/**
- * Implements Brzozowski's algebraic method to convert a DFA into a regular expression.
- * http://cs.stackexchange.com/questions/2016/how-to-convert-finite-automata-to-regular-expressions#2392
- *
- * @param {State} root - the initial state of the DFA
- * @return {RegExp} - the converted regular expression
- */
-function toRegExp(root, flags) {
-	let pattern = toString(root);
-	return new RegExp(pattern, flags);
 }
 
 /**
@@ -189,5 +177,4 @@ function concat(a, b) {
   return new Concatenation(a, b);
 }
 
-exports.toString = toString;
-exports.toRegExp = toRegExp;
+module.exports = toRegex;

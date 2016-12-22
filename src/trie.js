@@ -1,6 +1,6 @@
 const State = require('./state');
 const minimize = require('./minimize');
-const {toString, toRegExp} = require('./regex');
+const toRegex = require('./regex');
 
 /**
  * A Trie represents a set of strings in a tree data structure
@@ -40,7 +40,7 @@ class Trie {
    * @return {string} pattern - The regex pattern.
    */
   toString() {
-    return toString(this.minimize());
+    return toRegex(this.minimize());
   }
 
   /**
@@ -49,7 +49,7 @@ class Trie {
    * @return {RegExp}
    */
   toRegExp(flags) {
-    return toRegExp(this.minimize(), flags);
+    return new RegExp(this.toString(), flags);
   }
 }
 
