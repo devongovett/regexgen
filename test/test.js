@@ -47,6 +47,7 @@ describe('regexgen', function () {
     t.add('foobar');
     t.add('foobaz');
 
+    assert.deepEqual(t.toString(), 'fooba[rz]');
     assert.deepEqual(t.toRegExp(), /fooba[rz]/);
   });
 });
