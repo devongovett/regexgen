@@ -23,7 +23,7 @@ function minimize(root, alphabet) {
   }
 
   let P = new Set([finalStates, states.difference(finalStates)]);
-  let W = new Set([finalStates]);
+  let W = new Set(P);
 
   while (W.size > 0) {
     let A = W.shift();

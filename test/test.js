@@ -49,4 +49,8 @@ describe('regexgen', function () {
 
     assert.deepEqual(t.toRegExp(), /fooba[rz]/);
   });
+
+  it('should work with optional groups', function () {
+    assert.deepEqual(regexgen(['a', 'abc']), /a(?:bc)?/);
+  });
 });
