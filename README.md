@@ -41,6 +41,9 @@ $ regexgen
 Usage: regexgen [-gimuy] string1 string2 string3...
 ```
 
+The optional first parameter is the [flags](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp) to add
+to the regex (e.g. `-i` for a case insensitive match).
+
 ## How does it work?
 
 1. Generate a [Trie](https://en.wikipedia.org/wiki/Trie) containing all of the input strings.
