@@ -24,6 +24,15 @@ t.add('foobaz');
 t.toRegExp(); // => /fooba[rz]/
 ```
 
+## CLI
+
+`regexgen` also has a simple CLI to generate regexes using inputs from the command line.
+
+```
+$ regexgen
+Usage: regexgen [-gimuy] string1 string2 string3...
+```
+
 ## How does it work?
 
 1. Generate a [Trie](https://en.wikipedia.org/wiki/Trie) containing all of the input strings.
