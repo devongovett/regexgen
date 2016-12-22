@@ -2,6 +2,14 @@
 
 Generates regular expressions that match a set of strings.
 
+## Installation
+
+`regexgen` can be installed using [npm](https://npmjs.com):
+
+```
+npm install regexgen
+```
+
 ## Example
 
 The simplest use is to simply pass an array of strings to `regexgen`:
