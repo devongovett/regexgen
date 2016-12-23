@@ -1,6 +1,6 @@
 {
   "name": "regexgen",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Generate regular expressions that match a set of strings",
   "main": "index.js",
   "bin": {
