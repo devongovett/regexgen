@@ -54,4 +54,12 @@ describe('regexgen', function () {
   it('should work with optional groups', function () {
     assert.deepEqual(regexgen(['a', 'abc']), /a(?:bc)?/);
   });
+
+  it('should wrap optional character classes in parens if they contain non-BMP codepoints', function () {
+    assert.deepEqual(regexgen(['\u261D', '\u261D\u{1f3fb}', '\u261D\u{1f3fc}']), /\u261D(?:\uD83C[\uDFFB\uDFFC])?/);
+  });
+
+  it('should wrap optional literals in parens if they contain more than one code unit', function () {
+    assert.deepEqual(regexgen(['\u261D', '\u261D\u{1f3fb}']), /\u261D(?:\uD83C\uDFFB)?/);
+  });
 });

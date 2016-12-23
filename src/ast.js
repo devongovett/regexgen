@@ -23,7 +23,6 @@ class CharClass {
   constructor(a, b) {
     this.precedence = 2;
     this.set = regenerate(a, b);
-    this.isSingleCharacter = true;
   }
 
   toString() {
@@ -32,6 +31,10 @@ class CharClass {
 
   getCharClass() {
     return this.set;
+  }
+
+  get isSingleCharacter() {
+    return !this.set.toArray().some(c => c > 0xffff);
   }
 }
 
@@ -101,7 +104,7 @@ class Literal {
   }
 
   get isSingleCharacter() {
-    return Array.from(this.value).length === 1;
+    return this.value.length === 1;
   }
 
   toString() {
@@ -109,7 +112,7 @@ class Literal {
   }
 
   getCharClass() {
-    if (this.isSingleCharacter) {
+    if (Array.from(this.value).length === 1) {
       return this.value;
     }
   }
