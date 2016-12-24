@@ -53,25 +53,26 @@ class Concatenation {
   }
 
   getLiteral(side) {
-    if (side === 'start' && this.a instanceof Literal) {
-      return this.a;
+    if (side === 'start' && this.a.getLiteral) {
+      return this.a.getLiteral(side);
     }
 
-    if (side === 'end' && this.b instanceof Literal) {
-      return this.b;
+    if (side === 'end' && this.b.getLiteral) {
+      return this.b.getLiteral(side);
     }
   }
 
-  simplify() {
-    if (this.a.isEmpty) {
-      return this.b;
+  removeSubstring(side, len) {
+    let {a, b} = this;
+    if (side === 'start' && a.removeSubstring) {
+      a = a.removeSubstring(side, len);
     }
 
-    if (this.b.isEmpty) {
-      return this.a;
+    if (side === 'end' && b.removeSubstring) {
+      b = b.removeSubstring(side, len);
     }
 
-    return this;
+    return a.isEmpty ? b : b.isEmpty ? a : new Concatenation(a, b);
   }
 }
 
@@ -118,7 +119,17 @@ class Literal {
   }
 
   getLiteral() {
-    return this;
+    return this.value;
+  }
+
+  removeSubstring(side, len) {
+    if (side === 'start') {
+      return new Literal(this.value.slice(len));
+    }
+
+    if (side === 'end') {
+      return new Literal(this.value.slice(0, this.value.length - len));
+    }
   }
 }
 

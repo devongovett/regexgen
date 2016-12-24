@@ -65,12 +65,9 @@ function star(exp) {
 function union(a, b) {
   if (a != null && b != null && a !== b) {
     // Hoist common substrings at the start and end of the options
-    let start = removeCommonSubstring(a, b, 'start');
-    let end = removeCommonSubstring(a, b, 'end');
-    let res;
-
-    a = a.simplify ? a.simplify() : a;
-    b = b.simplify ? b.simplify() : b;
+    let start, end, res;
+    [a, b, start] = removeCommonSubstring(a, b, 'start');
+    [a, b, end] = removeCommonSubstring(a, b, 'end');
 
     // If a or b is empty, make an optional group instead
     if (a.isEmpty || b.isEmpty) {
@@ -104,21 +101,21 @@ function union(a, b) {
  * Removes the common prefix or suffix from the two expressions
  */
 function removeCommonSubstring(a, b, side) {
-  a = a.getLiteral && a.getLiteral(side);
-  b = b.getLiteral && b.getLiteral(side);
-  if (!a || !b) return null;
-
-  let s = commonSubstring(a.value, b.value, side);
-
-  if (side === 'start') {
-    a.value = a.value.slice(s.length);
-    b.value = b.value.slice(s.length);
-  } else {
-    a.value = a.value.slice(0, a.value.length - s.length);
-    b.value = b.value.slice(0, b.value.length - s.length);
+  let al = a.getLiteral && a.getLiteral(side);
+  let bl = b.getLiteral && b.getLiteral(side);
+  if (!al || !bl) {
+    return [a, b, null];
   }
 
-  return s;
+  let s = commonSubstring(al, bl, side);
+  if (!s) {
+    return [a, b, ''];
+  }
+
+  a = a.removeSubstring(side, s.length);
+  b = b.removeSubstring(side, s.length);
+
+  return [a, b, s];
 }
 
 /**

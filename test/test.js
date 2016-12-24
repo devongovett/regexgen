@@ -62,4 +62,8 @@ describe('regexgen', function () {
   it('should wrap optional literals in parens if they contain more than one code unit', function () {
     assert.deepEqual(regexgen(['\u261D', '\u261D\u{1f3fb}']), /\u261D(?:\uD83C\uDFFB)?/);
   });
+
+  it('should correctly extract common prefix from multiple alternations', function () {
+    assert.deepEqual(regexgen(['abjv', 'abxcjv', 'abydjv', 'abzejv']), /ab(?:(?:ze|yd)?|xc)jv/);
+  })
 });
