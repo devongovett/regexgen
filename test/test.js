@@ -64,6 +64,6 @@ describe('regexgen', function () {
   });
 
   it('should correctly extract common prefix from multiple alternations', function () {
-    assert.deepEqual(regexgen(['abjv', 'abxcjv', 'abydjv', 'abzejv']), /ab(?:(?:ze|yd)?|xc)jv/);
-  })
+    assert.deepEqual(regexgen(['abjv', 'abxcjv', 'abydjv', 'abzejv']), /ab(?:ze|yd|xc)?jv/);
+  });
 });

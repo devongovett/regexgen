@@ -72,6 +72,10 @@ function union(a, b) {
     // If a or b is empty, make an optional group instead
     if (a.isEmpty || b.isEmpty) {
       res = new Repetition(a.isEmpty ? b : a, '?');
+    } else if (a instanceof Repetition && a.type === '?') {
+      res = new Repetition(new Alternation(a.expr, b), '?');
+    } else if (b instanceof Repetition && b.type === '?') {
+      res = new Repetition(new Alternation(a, b.expr), '?');
     } else {
       // Check if we can make a character class instead of an alternation
       let ac = a.getCharClass && a.getCharClass();
