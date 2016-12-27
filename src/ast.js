@@ -21,7 +21,7 @@ class Alternation {
  */
 class CharClass {
   constructor(a, b) {
-    this.precedence = 2;
+    this.precedence = 1;
     this.set = regenerate(a, b);
   }
 
