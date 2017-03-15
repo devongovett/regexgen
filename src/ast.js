@@ -7,6 +7,9 @@ const regenerate = require('regenerate');
 class Alternation {
   constructor(a, b) {
     this.precedence = 1;
+    if (b.toString().length > a.toString().length) {
+      [a, b] = [b, a];
+    }
     this.a = a;
     this.b = b;
   }

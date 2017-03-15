@@ -57,6 +57,18 @@ describe('regexgen', function () {
     assert.deepEqual(t2.toRegExp(), /fooba[rz]/);
   });
 
+  it('should sort alternation options correctly (#10)', function () {
+    let s = '\uD83C\uDFCA\uD83C\uDFFD\u200D\u2640\uFE0F';
+    let r = regexgen([
+      '\uD83C\uDDF7\uD83C\uDDFC',
+      '\uD83C\uDDF8\uD83C\uDDE6',
+      '\uD83C\uDFCA\uD83C\uDFFD',
+      s
+    ]);
+
+    assert.deepEqual(s.match(r)[0], s);
+  });
+
   it('should work with optional groups', function () {
     assert.deepEqual(regexgen(['a', 'abc']), /a(?:bc)?/);
   });
