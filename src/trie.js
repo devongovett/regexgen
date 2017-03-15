@@ -28,6 +28,16 @@ class Trie {
   }
 
   /**
+   * Adds the given array of strings to the trie.
+   * @param {Array<string>} strings - the array of strings to add
+   */
+  addAll(strings) {
+    for (let string of strings) {
+      this.add(string);
+    }
+  }
+
+  /**
    * Returns a minimal DFA representing the strings in the trie.
    * @return {State} - the starting state of the minimal DFA
    */

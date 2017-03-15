@@ -49,6 +49,12 @@ describe('regexgen', function () {
 
     assert.deepEqual(t.toString(), 'fooba[rz]');
     assert.deepEqual(t.toRegExp(), /fooba[rz]/);
+
+    let t2 = new regexgen.Trie;
+    t2.addAll(['foobar', 'foobaz']);
+
+    assert.deepEqual(t2.toString(), 'fooba[rz]');
+    assert.deepEqual(t2.toRegExp(), /fooba[rz]/);
   });
 
   it('should work with optional groups', function () {

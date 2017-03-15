@@ -8,10 +8,7 @@ const Trie = require('./src/trie');
  */
 function regexgen(inputs, flags) {
   let trie = new Trie;
-  for (let input of inputs) {
-    trie.add(input);
-  }
-
+  trie.addAll(inputs);
   return trie.toRegExp(flags);
 }
 
