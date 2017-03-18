@@ -5,14 +5,20 @@ const regenerate = require('regenerate');
  * Represents an alternation (e.g. `foo|bar`)
  */
 class Alternation {
-  constructor(a, b) {
+  constructor(...options) {
     this.precedence = 1;
-    this.a = a;
-    this.b = b;
+    this.options = this.flatten(options);
+    this.options.sort((a, b) => b.length - a.length);
+  }
+
+  flatten(options) {
+    return options.reduce((res, option) => res.concat(
+      option instanceof Alternation ? this.flatten(option.options) : option
+    ), []);
   }
 
   toString() {
-    return parens(this.a, this) + '|' + parens(this.b, this);
+    return this.options.map(o => parens(o, this)).join('|');
   }
 }
 
@@ -23,6 +29,10 @@ class CharClass {
   constructor(a, b) {
     this.precedence = 1;
     this.set = regenerate(a, b);
+  }
+
+  get length() {
+    return 1;
   }
 
   toString() {
@@ -46,6 +56,10 @@ class Concatenation {
     this.precedence = 2;
     this.a = a;
     this.b = b;
+  }
+
+  get length() {
+    return this.a.length + this.b.length;
   }
 
   toString() {
@@ -86,6 +100,10 @@ class Repetition {
     this.type = type;
   }
 
+  get length() {
+    return this.expr.length;
+  }
+
   toString() {
     return parens(this.expr, this) + this.type;
   }
@@ -105,7 +123,11 @@ class Literal {
   }
 
   get isSingleCharacter() {
-    return this.value.length === 1;
+    return this.length === 1;
+  }
+
+  get length() {
+    return this.value.length;
   }
 
   toString() {

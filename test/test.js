@@ -72,4 +72,16 @@ describe('regexgen', function () {
   it('should correctly extract common prefix from multiple alternations', function () {
     assert.deepEqual(regexgen(['abjv', 'abxcjv', 'abydjv', 'abzejv']), /ab(?:ze|yd|xc)?jv/);
   });
+
+  it('should sort alternation options correctly (#10)', function () {
+    let s = '\uD83C\uDFCA\uD83C\uDFFD\u200D\u2640\uFE0F';
+    let r = regexgen([
+      '\uD83C\uDDF7\uD83C\uDDFC',
+      '\uD83C\uDDF8\uD83C\uDDE6',
+      '\uD83C\uDFCA\uD83C\uDFFD',
+      s
+    ]);
+
+    assert.deepEqual(s.match(r)[0], s);
+  });
 });
