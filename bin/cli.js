@@ -16,4 +16,4 @@ if (args.length === 0) {
 let trie = new Trie;
 trie.addAll(args);
 
-console.log(`/${trie.toString()}/${flags}`);
+console.log(new RegExp(trie.toString(), flags));
