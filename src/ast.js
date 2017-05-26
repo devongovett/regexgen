@@ -40,7 +40,7 @@ class CharClass {
   }
 
   toString() {
-    return this.set.toString();
+    return this.set.toString({ hasUnicodeFlag: true });
   }
 
   getCharClass() {
@@ -135,7 +135,7 @@ class Literal {
   }
 
   toString() {
-    return jsesc(this.value).replace(/([\t\n\f\r\$\(\)\*\+\-\.\?\[\]\^\{\|\}])/g, '\\$1');
+    return jsesc(this.value, { es6: true });
   }
 
   getCharClass() {
