@@ -17,6 +17,10 @@ class Alternation {
     ), []);
   }
 
+  get length() {
+    return this.options[0].length;
+  }
+
   toString() {
     return this.options.map(o => parens(o, this)).join('|');
   }
