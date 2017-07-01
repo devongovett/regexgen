@@ -84,4 +84,12 @@ describe('regexgen', function () {
 
     assert.deepEqual(s.match(r)[0], s);
   });
+
+  it('should sort alternations of alternations correctly', function () {
+    let r = regexgen(['aef', 'aghz', 'ayz', 'abcdz', 'abcd']);
+    let s = 'abcdz';
+
+    assert.deepEqual(s.match(r)[0], s);
+    assert.deepEqual(r, /a(?:(?:bcd|gh|y)z|bcd|ef)/);
+  });
 });
