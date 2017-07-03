@@ -30,25 +30,30 @@ class Alternation {
  * Represents a character class (e.g. [0-9a-z])
  */
 class CharClass {
-  constructor(a, b) {
+  constructor(a, b, flags) {
     this.precedence = 1;
     this.set = regenerate(a, b);
+    this.flags = flags;
   }
 
   get length() {
     return 1;
   }
 
+  get isSingleCharacter() {
+    return !this.set.toArray().some(c => c > 0xffff);
+  }
+
+  get isUnicode() {
+    return this.flags && this.flags.indexOf('u') !== -1;
+  }
+
   toString() {
-    return this.set.toString({ hasUnicodeFlag: true });
+    return this.set.toString({ hasUnicodeFlag: this.isUnicode });
   }
 
   getCharClass() {
     return this.set;
-  }
-
-  get isSingleCharacter() {
-    return !this.set.toArray().some(c => c > 0xffff);
   }
 }
 
@@ -117,9 +122,10 @@ class Repetition {
  * Represents a literal (e.g. a string)
  */
 class Literal {
-  constructor(value) {
+  constructor(value, flags) {
     this.precedence = 2;
     this.value = value;
+    this.flags = flags;
   }
 
   get isEmpty() {
@@ -130,12 +136,16 @@ class Literal {
     return this.length === 1;
   }
 
+  get isUnicode() {
+    return this.flags && this.flags.indexOf('u') !== -1;
+  }
+
   get length() {
     return this.value.length;
   }
 
   toString() {
-    return jsesc(this.value, { es6: true });
+    return jsesc(this.value, { es6: this.isUnicode });
   }
 
   getCharClass() {
