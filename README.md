@@ -36,13 +36,30 @@ t.toRegExp(); // => /fooba[rz]/
 
 `regexgen` also has a simple CLI to generate regexes using inputs from the command line.
 
-```
+```shell
 $ regexgen
 Usage: regexgen [-gimuy] string1 string2 string3...
 ```
 
 The optional first parameter is the [flags](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp) to add
 to the regex (e.g. `-i` for a case insensitive match).
+
+## ES6 and Unicode
+
+By default `regexgen` will output a standard JavaScript regular expression, with Unicode codepoints converted into UCS-2 surrogate pairs.
+
+If desired, you can request an ES6-style Unicode regular expression by supplying the `-u` flag, which results in those codepoints being retained.
+
+```shell
+$ regexgen 👩 👩‍💻 👩🏻‍💻 👩🏼‍💻 👩🏽‍💻 👩🏾‍💻 👩🏿‍💻
+/\uD83D\uDC69(?:(?:\uD83C[\uDFFB-\uDFFF])?\u200D\uD83D\uDCBB)?/
+
+$ regexgen -u 👩 👩‍💻 👩🏻‍💻 👩🏼‍💻 👩🏽‍💻 👩🏾‍💻 👩🏿‍💻
+/\u{1F469}(?:(?:[\u{1F3FB}-\u{1F3FF}])?\u200D\u{1F4BB})?/u
+```
+
+
+Such regular expressions are compatible with current versions of Node, as well as the latest browsers, and may be more transferrable to other languages.
 
 ## How does it work?
 
