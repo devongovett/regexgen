@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const Trie = require('../src/trie');
+const regexgen = require('../');
 
 let args = process.argv.slice(2);
 let flags = '';
@@ -13,7 +13,4 @@ if (args.length === 0) {
   process.exit(1);
 }
 
-let trie = new Trie;
-trie.addAll(args);
-
-console.log(new RegExp(trie.toString(), flags));
+console.log(regexgen(args, flags));
