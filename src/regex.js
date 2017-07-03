@@ -6,9 +6,10 @@ const {Alternation, CharClass, Concatenation, Repetition, Literal} = require('./
  * http://cs.stackexchange.com/questions/2016/how-to-convert-finite-automata-to-regular-expressions#2392
  *
  * @param {State} root - the initial state of the DFA
+ * @param {string} flags - The flags to add to the regex.
  * @return {String} - the converted regular expression pattern
  */
-function toRegex(root) {
+function toRegex(root, flags) {
   let states = Array.from(root.visit());
 
   // Setup the system of equations A and B from Arden's Lemma.
@@ -20,30 +21,30 @@ function toRegex(root) {
   for (let i = 0; i < states.length; i++) {
     let a = states[i];
     if (a.accepting) {
-      B[i] = new Literal('');
+      B[i] = new Literal('', flags);
     }
 
     A[i] = [];
     for (let [t, s] of a.transitions) {
       let j = states.indexOf(s);
-      A[i][j] = A[i][j] ? union(A[i][j], new Literal(t)) : new Literal(t);
+      A[i][j] = A[i][j] ? union(A[i][j], new Literal(t, flags), flags) : new Literal(t, flags);
     }
   }
 
   // Solve the of equations
   for (let n = states.length - 1; n >= 0; n--) {
     if (A[n][n] != null) {
-      B[n] = concat(star(A[n][n]), B[n]);
+      B[n] = concat(star(A[n][n]), B[n], flags);
       for (let j = 0; j < n; j++) {
-        A[n][j] = concat(star(A[n][n]), A[n][j]);
+        A[n][j] = concat(star(A[n][n]), A[n][j], flags);
       }
     }
 
     for (let i = 0; i < n; i++) {
       if (A[i][n] != null) {
-        B[i] = union(B[i], concat(A[i][n], B[n]));
+        B[i] = union(B[i], concat(A[i][n], B[n], flags), flags);
         for (let j = 0; j < n; j++) {
-          A[i][j] = union(A[i][j], concat(A[i][n], A[n][j]));
+          A[i][j] = union(A[i][j], concat(A[i][n], A[n][j], flags), flags);
         }
       }
     }
@@ -62,7 +63,7 @@ function star(exp) {
 /**
  * Creates a union between two expressions
  */
-function union(a, b) {
+function union(a, b, flags) {
   if (a != null && b != null && a !== b) {
     // Hoist common substrings at the start and end of the options
     let start, end, res;
@@ -81,18 +82,18 @@ function union(a, b) {
       let ac = a.getCharClass && a.getCharClass();
       let bc = b.getCharClass && b.getCharClass();
       if (ac && bc) {
-        res = new CharClass(ac, bc);
+        res = new CharClass(ac, bc, flags);
       } else {
         res = new Alternation(a, b);
       }
     }
 
     if (start) {
-      res = new Concatenation(new Literal(start), res);
+      res = new Concatenation(new Literal(start, flags), res);
     }
 
     if (end) {
-      res = new Concatenation(res, new Literal(end));
+      res = new Concatenation(res, new Literal(end, flags));
     }
 
     return res;
@@ -149,7 +150,7 @@ function commonSubstring(a, b, side) {
 /**
  * Creates a concatenation between expressions a and b
  */
-function concat(a, b) {
+function concat(a, b, flags) {
   if (a == null || b == null) {
     return null;
   }
@@ -164,15 +165,15 @@ function concat(a, b) {
 
   // Combine literals
   if (a instanceof Literal && b instanceof Literal) {
-    return new Literal(a.value + b.value);
+    return new Literal(a.value + b.value, flags);
   }
 
   if (a instanceof Literal && b instanceof Concatenation && b.a instanceof Literal) {
-    return new Concatenation(new Literal(a.value + b.a.value), b.b);
+    return new Concatenation(new Literal(a.value + b.a.value, flags), b.b);
   }
 
   if (b instanceof Literal && a instanceof Concatenation && a.b instanceof Literal) {
-    return new Concatenation(a.a, new Literal(a.b.value + b.value));
+    return new Concatenation(a.a, new Literal(a.b.value + b.value, flags));
   }
 
   return new Concatenation(a, b);
