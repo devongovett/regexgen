@@ -147,21 +147,11 @@ class Literal {
   toString() {
     return jsesc(this.value, { es6: this.isUnicode })
       .replace(/[\t\n\f\r\$\(\)\*\+\-\.\?\[\]\^\|]/g, '\\$&')
-      .replace(/[\{\}]/g, (match, offset, string) => {
+      .replace(
         // special handling to not escape curly braces which are part of Unicode escapes
-
-        // don't escape opening curly braces immediately preceded by `\u`
-        if (match === '{' && string.slice(offset - 2, offset) === '\\u') {
-          return match;
-        }
-
-        // don't escape closing curly braces ending Unicode escapes
-        if (match === '}' && string.slice(offset - 8, offset - 5) === '\\u{') {
-          return match;
-        }
-
-        return '\\' + match;
-      });
+        /(\\u\{[a-z1-9]+\})|([\{\}])/ig,
+        (match, unicode, brace) => unicode || '\\' + brace
+      );
   }
 
   getCharClass() {
