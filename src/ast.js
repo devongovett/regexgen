@@ -149,7 +149,7 @@ class Literal {
       .replace(/[\t\n\f\r\$\(\)\*\+\-\.\?\[\]\^\|]/g, '\\$&')
       .replace(
         // special handling to not escape curly braces which are part of Unicode escapes
-        /(\\u\{[a-z1-9]+\})|([\{\}])/ig,
+        /(\\u\{[a-z0-9]+\})|([\{\}])/ig,
         (match, unicode, brace) => unicode || '\\' + brace
       );
   }
