@@ -32,6 +32,7 @@ describe('regexgen', function () {
 
   it('should escape meta characters', function () {
     assert.deepEqual(regexgen(['foo|bar[test]+']), /foo\|bar\[test\]\+/);
+    assert.deepEqual(regexgen(['u{}\\iu']), /u\{\}\\iu/);
   });
 
   it('should escape non-ascii characters', function () {
