@@ -21,36 +21,36 @@ function toRegex(root, flags) {
   for (let i = 0; i < states.length; i++) {
     let a = states[i];
     if (a.accepting) {
-      B[i] = new Literal('', flags);
+      B[i] = new Literal('');
     }
 
     A[i] = [];
     for (let [t, s] of a.transitions) {
       let j = states.indexOf(s);
-      A[i][j] = A[i][j] ? union(A[i][j], new Literal(t, flags), flags) : new Literal(t, flags);
+      A[i][j] = A[i][j] ? union(A[i][j], new Literal(t)) : new Literal(t);
     }
   }
 
   // Solve the of equations
   for (let n = states.length - 1; n >= 0; n--) {
     if (A[n][n] != null) {
-      B[n] = concat(star(A[n][n]), B[n], flags);
+      B[n] = concat(star(A[n][n]), B[n]);
       for (let j = 0; j < n; j++) {
-        A[n][j] = concat(star(A[n][n]), A[n][j], flags);
+        A[n][j] = concat(star(A[n][n]), A[n][j]);
       }
     }
 
     for (let i = 0; i < n; i++) {
       if (A[i][n] != null) {
-        B[i] = union(B[i], concat(A[i][n], B[n], flags), flags);
+        B[i] = union(B[i], concat(A[i][n], B[n]));
         for (let j = 0; j < n; j++) {
-          A[i][j] = union(A[i][j], concat(A[i][n], A[n][j], flags), flags);
+          A[i][j] = union(A[i][j], concat(A[i][n], A[n][j]));
         }
       }
     }
   }
 
-  return B[0].toString();
+  return B[0].toString(flags);
 }
 
 /**
@@ -63,7 +63,7 @@ function star(exp) {
 /**
  * Creates a union between two expressions
  */
-function union(a, b, flags) {
+function union(a, b) {
   if (a != null && b != null && a !== b) {
     // Hoist common substrings at the start and end of the options
     let start, end, res;
@@ -82,18 +82,18 @@ function union(a, b, flags) {
       let ac = a.getCharClass && a.getCharClass();
       let bc = b.getCharClass && b.getCharClass();
       if (ac && bc) {
-        res = new CharClass(ac, bc, flags);
+        res = new CharClass(ac, bc);
       } else {
         res = new Alternation(a, b);
       }
     }
 
     if (start) {
-      res = new Concatenation(new Literal(start, flags), res);
+      res = new Concatenation(new Literal(start), res);
     }
 
     if (end) {
-      res = new Concatenation(res, new Literal(end, flags));
+      res = new Concatenation(res, new Literal(end));
     }
 
     return res;
@@ -150,7 +150,7 @@ function commonSubstring(a, b, side) {
 /**
  * Creates a concatenation between expressions a and b
  */
-function concat(a, b, flags) {
+function concat(a, b) {
   if (a == null || b == null) {
     return null;
   }
@@ -165,15 +165,15 @@ function concat(a, b, flags) {
 
   // Combine literals
   if (a instanceof Literal && b instanceof Literal) {
-    return new Literal(a.value + b.value, flags);
+    return new Literal(a.value + b.value);
   }
 
   if (a instanceof Literal && b instanceof Concatenation && b.a instanceof Literal) {
-    return new Concatenation(new Literal(a.value + b.a.value, flags), b.b);
+    return new Concatenation(new Literal(a.value + b.a.value), b.b);
   }
 
   if (b instanceof Literal && a instanceof Concatenation && a.b instanceof Literal) {
-    return new Concatenation(a.a, new Literal(a.b.value + b.value, flags));
+    return new Concatenation(a.a, new Literal(a.b.value + b.value));
   }
 
   return new Concatenation(a, b);

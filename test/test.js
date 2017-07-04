@@ -71,7 +71,7 @@ describe('regexgen', function () {
   });
 
   it('should retain non-BMP codepoints when the Unicode flag is passed', function () {
-    assert.deepEqual(regexgen(['\u261D', '\u261D\u{1f3fb}'], 'u'), /\u261D(?:\u{1F3FB})?/u);
+    assert.deepEqual(regexgen(['\u261D', '\u261D\u{1f3fb}'], 'u'), /\u261D\u{1F3FB}?/u);
   });
 
   it('should correctly extract common prefix from multiple alternations', function () {
