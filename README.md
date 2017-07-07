@@ -44,11 +44,11 @@ Usage: regexgen [-gimuy] string1 string2 string3...
 The optional first parameter is the [flags](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp) to add
 to the regex (e.g. `-i` for a case insensitive match).
 
-## ES6 and Unicode
+## ES2015 and Unicode
 
 By default `regexgen` will output a standard JavaScript regular expression, with Unicode codepoints converted into UCS-2 surrogate pairs.
 
-If desired, you can request an ES6-style Unicode regular expression by supplying the `-u` flag, which results in those codepoints being retained.
+If desired, you can request an ES2015-compatible Unicode regular expression by supplying the `-u` flag, which results in those codepoints being retained.
 
 ```shell
 $ regexgen 👩 👩‍💻 👩🏻‍💻 👩🏼‍💻 👩🏽‍💻 👩🏾‍💻 👩🏿‍💻
