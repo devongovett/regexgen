@@ -78,6 +78,13 @@ describe('regexgen', function () {
     );
   });
 
+  it('should handle non-BMP codepoint ranges correctly', function() {
+    assert.deepEqual(
+      regexgen(['\u{1F311}', '\u{1F312}', '\u{1F313}', '\u{1F314}', '\u{1F315}', '\u{1F316}', '\u{1F317}', '\u{1F318}'], 'u'),
+      /[\u{1F311}-\u{1F318}]/u
+    );
+  });
+
   it('should correctly extract common prefix from multiple alternations', function () {
     assert.deepEqual(regexgen(['abjv', 'abxcjv', 'abydjv', 'abzejv']), /ab(?:ze|yd|xc)?jv/);
   });
