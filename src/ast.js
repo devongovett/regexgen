@@ -44,7 +44,7 @@ class CharClass {
   }
 
   get isSingleCodepoint() {
-    return Array.from(this.set).length === 1;
+    return true;
   }
 
   toString(flags) {

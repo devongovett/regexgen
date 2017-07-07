@@ -101,6 +101,33 @@ describe('regexgen', function () {
     assert.deepEqual(s.match(r)[0], s);
   });
 
+  it('should sort non-BMP alternation options correctly', function () {
+    let r = regexgen(
+      [
+        // shrug emoji
+        '\u{1F937}\u200D',
+        // shrug emoji with fitzpatrick modifiers
+        '\u{1F937}\u{1F3FB}\u200D',
+        '\u{1F937}\u{1F3FC}\u200D',
+        '\u{1F937}\u{1F3FD}\u200D',
+        '\u{1F937}\u{1F3FE}\u200D',
+        '\u{1F937}\u{1F3FF}\u200D',
+        // shrug emoji with gender modifier
+        '\u{1F937}\u200D\u2640\uFE0F',
+        // shrug emoji with gender and fitzpatrick modifiers
+        '\u{1F937}\u{1F3FB}\u200D\u2640\uFE0F',
+        '\u{1F937}\u{1F3FC}\u200D\u2640\uFE0F',
+        '\u{1F937}\u{1F3FD}\u200D\u2640\uFE0F',
+        '\u{1F937}\u{1F3FE}\u200D\u2640\uFE0F',
+        '\u{1F937}\u{1F3FF}\u200D\u2640\uFE0F'
+      ],
+      'u'
+    );
+
+    assert.deepEqual(r, /\u{1F937}[\u{1F3FB}-\u{1F3FF}]?\u200D(?:\u2640\uFE0F)?/u);
+    assert.deepEqual('\u{1F937}\u{1F3FB}\u200D\u2640\uFE0F'.match(r)[0], '\u{1F937}\u{1F3FB}\u200D\u2640\uFE0F');
+  });
+
   it('should sort alternations of alternations correctly', function () {
     let r = regexgen(['aef', 'aghz', 'ayz', 'abcdz', 'abcd']);
     let s = 'abcdz';
