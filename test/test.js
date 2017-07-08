@@ -32,6 +32,7 @@ describe('regexgen', function () {
 
   it('should escape meta characters', function () {
     assert.deepEqual(regexgen(['foo|bar[test]+']), /foo\|bar\[test\]\+/);
+    assert.deepEqual(regexgen(['u{}\\iu']), /u\{\}\\iu/);
   });
 
   it('should escape non-ascii characters', function () {
@@ -69,6 +70,21 @@ describe('regexgen', function () {
     assert.deepEqual(regexgen(['\u261D', '\u261D\u{1f3fb}']), /\u261D(?:\uD83C\uDFFB)?/);
   });
 
+  it('should retain non-BMP codepoints when the Unicode flag is passed', function () {
+    assert.deepEqual(regexgen(['\u261D', '\u261D\u{1f3fb}'], 'u'), /\u261D\u{1F3FB}?/u);
+    assert.deepEqual(
+      regexgen(['\u{1F3F4}', '\u{1F3F4}\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}', '\u{1F3F4}\u{E0067}\u{E0062}\u{E0077}\u{E006C}\u{E0073}', '\u{1F3F4}\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}'], 'u'),
+      /\u{1F3F4}(?:\u{E0067}\u{E0062}(?:\u{E0073}\u{E0063}\u{E0074}|\u{E0077}\u{E006C}\u{E0073}|\u{E0065}\u{E006E}\u{E0067}))?/u
+    );
+  });
+
+  it('should handle non-BMP codepoint ranges correctly', function() {
+    assert.deepEqual(
+      regexgen(['\u{1F311}', '\u{1F312}', '\u{1F313}', '\u{1F314}', '\u{1F315}', '\u{1F316}', '\u{1F317}', '\u{1F318}'], 'u'),
+      /[\u{1F311}-\u{1F318}]/u
+    );
+  });
+
   it('should correctly extract common prefix from multiple alternations', function () {
     assert.deepEqual(regexgen(['abjv', 'abxcjv', 'abydjv', 'abzejv']), /ab(?:ze|yd|xc)?jv/);
   });
@@ -83,6 +99,33 @@ describe('regexgen', function () {
     ]);
 
     assert.deepEqual(s.match(r)[0], s);
+  });
+
+  it('should sort non-BMP alternation options correctly', function () {
+    let r = regexgen(
+      [
+        // shrug emoji
+        '\u{1F937}\u200D',
+        // shrug emoji with fitzpatrick modifiers
+        '\u{1F937}\u{1F3FB}\u200D',
+        '\u{1F937}\u{1F3FC}\u200D',
+        '\u{1F937}\u{1F3FD}\u200D',
+        '\u{1F937}\u{1F3FE}\u200D',
+        '\u{1F937}\u{1F3FF}\u200D',
+        // shrug emoji with gender modifier
+        '\u{1F937}\u200D\u2640\uFE0F',
+        // shrug emoji with gender and fitzpatrick modifiers
+        '\u{1F937}\u{1F3FB}\u200D\u2640\uFE0F',
+        '\u{1F937}\u{1F3FC}\u200D\u2640\uFE0F',
+        '\u{1F937}\u{1F3FD}\u200D\u2640\uFE0F',
+        '\u{1F937}\u{1F3FE}\u200D\u2640\uFE0F',
+        '\u{1F937}\u{1F3FF}\u200D\u2640\uFE0F'
+      ],
+      'u'
+    );
+
+    assert.deepEqual(r, /\u{1F937}[\u{1F3FB}-\u{1F3FF}]?\u200D(?:\u2640\uFE0F)?/u);
+    assert.deepEqual('\u{1F937}\u{1F3FB}\u200D\u2640\uFE0F'.match(r)[0], '\u{1F937}\u{1F3FB}\u200D\u2640\uFE0F');
   });
 
   it('should sort alternations of alternations correctly', function () {

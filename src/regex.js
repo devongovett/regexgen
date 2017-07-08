@@ -6,9 +6,10 @@ const {Alternation, CharClass, Concatenation, Repetition, Literal} = require('./
  * http://cs.stackexchange.com/questions/2016/how-to-convert-finite-automata-to-regular-expressions#2392
  *
  * @param {State} root - the initial state of the DFA
+ * @param {string} flags - The flags to add to the regex.
  * @return {String} - the converted regular expression pattern
  */
-function toRegex(root) {
+function toRegex(root, flags) {
   let states = Array.from(root.visit());
 
   // Setup the system of equations A and B from Arden's Lemma.
@@ -49,7 +50,7 @@ function toRegex(root) {
     }
   }
 
-  return B[0].toString();
+  return B[0].toString(flags);
 }
 
 /**

@@ -47,10 +47,11 @@ class Trie {
 
   /**
    * Returns a regex pattern that matches the strings in the trie.
+   * @param {string} flags - The flags to add to the regex.
    * @return {string} pattern - The regex pattern.
    */
-  toString() {
-    return toRegex(this.minimize());
+  toString(flags) {
+    return toRegex(this.minimize(), flags);
   }
 
   /**
@@ -59,7 +60,7 @@ class Trie {
    * @return {RegExp}
    */
   toRegExp(flags) {
-    return new RegExp(this.toString(), flags);
+    return new RegExp(this.toString(flags), flags);
   }
 }
 

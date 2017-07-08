@@ -21,8 +21,8 @@ class Alternation {
     return this.options[0].length;
   }
 
-  toString() {
-    return this.options.map(o => parens(o, this)).join('|');
+  toString(flags) {
+    return this.options.map(o => parens(o, this, flags)).join('|');
   }
 }
 
@@ -39,16 +39,22 @@ class CharClass {
     return 1;
   }
 
-  toString() {
-    return this.set.toString();
+  get isSingleCharacter() {
+    return !this.set.toArray().some(c => c > 0xffff);
+  }
+
+  get isSingleCodepoint() {
+    return true;
+  }
+
+  toString(flags) {
+    return this.set.toString({
+      hasUnicodeFlag: flags && flags.indexOf('u') !== -1
+    });
   }
 
   getCharClass() {
     return this.set;
-  }
-
-  get isSingleCharacter() {
-    return !this.set.toArray().some(c => c > 0xffff);
   }
 }
 
@@ -66,8 +72,8 @@ class Concatenation {
     return this.a.length + this.b.length;
   }
 
-  toString() {
-    return parens(this.a, this) + parens(this.b, this);
+  toString(flags) {
+    return parens(this.a, this, flags) + parens(this.b, this, flags);
   }
 
   getLiteral(side) {
@@ -108,8 +114,8 @@ class Repetition {
     return this.expr.length;
   }
 
-  toString() {
-    return parens(this.expr, this) + this.type;
+  toString(flags) {
+    return parens(this.expr, this, flags) + this.type;
   }
 }
 
@@ -130,16 +136,26 @@ class Literal {
     return this.length === 1;
   }
 
+  get isSingleCodepoint() {
+    return Array.from(this.value).length === 1;
+  }
+
   get length() {
     return this.value.length;
   }
 
-  toString() {
-    return jsesc(this.value).replace(/([\t\n\f\r\$\(\)\*\+\-\.\?\[\]\^\{\|\}])/g, '\\$1');
+  toString(flags) {
+    return jsesc(this.value, { es6: flags && flags.indexOf('u') !== -1 })
+      .replace(/[\t\n\f\r\$\(\)\*\+\-\.\?\[\]\^\|]/g, '\\$&')
+      .replace(
+        // special handling to not escape curly braces which are part of Unicode escapes
+        /(\\u\{[a-z0-9]+\})|([\{\}])/ig,
+        (match, unicode, brace) => unicode || '\\' + brace
+      );
   }
 
   getCharClass() {
-    if (Array.from(this.value).length === 1) {
+    if (this.isSingleCodepoint) {
       return this.value;
     }
   }
@@ -159,9 +175,10 @@ class Literal {
   }
 }
 
-function parens(exp, parent) {
-  let str = exp.toString();
-  if (exp.precedence < parent.precedence && !exp.isSingleCharacter) {
+function parens(exp, parent, flags) {
+  const isUnicode = flags && flags.indexOf('u') !== -1;
+  let str = exp.toString(flags);
+  if (exp.precedence < parent.precedence && !exp.isSingleCharacter && !(isUnicode && exp.isSingleCodepoint)) {
     return '(?:' + str + ')';
   }
 
