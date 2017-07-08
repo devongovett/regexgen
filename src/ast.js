@@ -147,11 +147,9 @@ class Literal {
   toString(flags) {
     return jsesc(this.value, { es6: flags && flags.indexOf('u') !== -1 })
       .replace(/[\t\n\f\r\$\(\)\*\+\-\.\?\[\]\^\|]/g, '\\$&')
-      .replace(
-        // special handling to not escape curly braces which are part of Unicode escapes
-        /(\\u\{[a-z0-9]+\})|([\{\}])/ig,
-        (match, unicode, brace) => unicode || '\\' + brace
-      );
+
+      // special handling to not escape curly braces which are part of Unicode escapes
+      .replace(/(\\u\{[a-z0-9]+\})|([\{\}])/ig, (match, unicode, brace) => unicode || '\\' + brace);
   }
 
   getCharClass() {
@@ -176,7 +174,7 @@ class Literal {
 }
 
 function parens(exp, parent, flags) {
-  const isUnicode = flags && flags.indexOf('u') !== -1;
+  let isUnicode = flags && flags.indexOf('u') !== -1;
   let str = exp.toString(flags);
   if (exp.precedence < parent.precedence && !exp.isSingleCharacter && !(isUnicode && exp.isSingleCodepoint)) {
     return '(?:' + str + ')';

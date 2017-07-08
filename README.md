@@ -55,7 +55,7 @@ $ regexgen 👩 👩‍💻 👩🏻‍💻 👩🏼‍💻 👩🏽‍💻 👩
 /\uD83D\uDC69(?:(?:\uD83C[\uDFFB-\uDFFF])?\u200D\uD83D\uDCBB)?/
 
 $ regexgen -u 👩 👩‍💻 👩🏻‍💻 👩🏼‍💻 👩🏽‍💻 👩🏾‍💻 👩🏿‍💻
-/\u{1F469}(?:(?:[\u{1F3FB}-\u{1F3FF}])?\u200D\u{1F4BB})?/u
+/\u{1F469}(?:[\u{1F3FB}-\u{1F3FF}]?\u200D\u{1F4BB})?/u
 ```
 
 
