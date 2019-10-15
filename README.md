@@ -59,7 +59,7 @@ $ regexgen -u 👩 👩‍💻 👩🏻‍💻 👩🏼‍💻 👩🏽‍💻 �
 ```
 
 
-Such regular expressions are compatible with current versions of Node, as well as the latest browsers, and may be more transferrable to other languages.
+Such regular expressions are compatible with current versions of Node, as well as the latest browsers, and may be more transferable to other languages.
 
 ## How does it work?
 
