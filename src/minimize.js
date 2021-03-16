@@ -10,6 +10,10 @@ const State = require('./state');
  * @return {State} - the new initial state
  */
 function minimize(root) {
+  // TODO: Re-enable minimizing once the upstream bugs are fixed:
+  // https://github.com/devongovett/regexgen/issues/31
+  return root;
+
   let states = new Set(root.visit());
   let finalStates = states.filter(s => s.accepting);
 
