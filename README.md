@@ -2,9 +2,19 @@
 
 Generates regular expressions that match a set of strings.
 
+## Table of Contents
+
+- [Installation](#installation)
+- [Example](#example)
+- [API](#api)
+- [CLI](#cli)
+- [ES2015 and Unicode](#es2015-and-unicode)
+- [How does it work?](#how-does-it-work)
+- [License](#license)
+
 ## Installation
 
-`regexgen` can be installed using [npm](https://npmjs.com):
+`regexgen` can be installed using [npm](https://www.npmjs.com/package/regexgen):
 
 ```
 npm install regexgen
@@ -31,6 +41,42 @@ t.add('foobaz');
 
 t.toRegExp(); // => /fooba[rz]/
 ```
+
+## API
+### regexgen(inputs, flags)
+Returns a regular expression that matches the given input strings.
+| Parameter    | Type        | Description                                                                                                                 |
+|--------------|-------------|-----------------------------------------------------------------------------------------------------------------------------|
+| `inputs`     | String Array|List of strings used to generate the regex                                                                                   |
+| `flags`      | String      |Optional [flags](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp) to add to the regex|
+
+### The `Trie` Class:
+#### add(string)
+Adds the given string to the trie.
+| Parameter    | Type        | Description     |
+|--------------|-------------|-----------------|
+| `string`     | String      |The string to add|
+
+#### addAll(strings)
+Adds the given array of strings to the trie.
+| Parameter    | Type        | Description               |
+|--------------|-------------|---------------------------|
+| `strings`    | String Array|The array of strings to add|
+
+#### minimize()
+Returns a minimal DFA representing the strings in the trie.
+
+#### toString(flags)
+Returns a regex pattern that matches the strings in the trie.
+| Parameter    | Type        | Description                                                                                                                 |
+|--------------|-------------|-----------------------------------------------------------------------------------------------------------------------------|
+| `flags`      | String      |Optional [flags](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp) to add to the regex|
+
+#### toRegExp(flags)
+Returns a regex that matches the strings in the trie.
+| Parameter    | Type        | Description                                                                                                                 |
+|--------------|-------------|-----------------------------------------------------------------------------------------------------------------------------|
+| `flags`      | String      |Optional [flags](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp) to add to the regex|
 
 ## CLI
 
@@ -82,4 +128,4 @@ Such regular expressions are compatible with current versions of Node, as well a
 
 ## License
 
-MIT
+`regexgen` is distributed under the MIT License.
